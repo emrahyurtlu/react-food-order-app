@@ -8,24 +8,43 @@ const defaultCartState = {
 };
 
 const cartReducer = (state, action) => {
-  if(action.type === "ADD" ) {
+  if (action.type === "ADD") {
     // returns new concanated array
-    const updatedItems = state.items.concat(action.item);
-    const updatedAmount = state.totalAmount + action.item.price * action.item.amount;
+    const updatedAmount =
+      state.totalAmount + action.item.price * action.item.amount;
+    const existingCartItemIndex = state.items.findIndex(
+      (item) => item.id === action.item.id
+    );
+
+    const exsitingCartItem = state.items[existingCartItemIndex];
+    let updatedItems;
+
+    if (exsitingCartItem) {
+      let updatedItem = {
+        ...exsitingCartItem,
+        amount: exsitingCartItem.amount + action.item.amount,
+      };
+      updatedItems = [...state.items];
+      updatedItems[existingCartItemIndex] = updatedItem;
+    } else {
+      updatedItems = state.items.concat(action.item);
+    }
+
     return {
       items: updatedItems,
-      totalAmount: updatedAmount
-    }
+      totalAmount: updatedAmount,
+    };
   }
-  
-  if(action.type === "REMOVE" ) {
+
+  if (action.type === "REMOVE") {
     // returns new concanated array
     const updatedItems = state.items.concat(action.item);
-    const updatedAmount = state.totalAmount + action.item.price * action.item.amount;
+    const updatedAmount =
+      state.totalAmount + action.item.price * action.item.amount;
     return {
       items: updatedItems,
-      totalAmount: updatedAmount
-    }
+      totalAmount: updatedAmount,
+    };
   }
   return defaultCartState;
 };
